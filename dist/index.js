@@ -11,6 +11,8 @@ class Universe {
     finished;
     previous;
     previous2;
+    color;
+    bgColor;
     constructor() {
         this.finished = false;
         this.width = 64;
@@ -19,11 +21,20 @@ class Universe {
         this.previous = [];
         this.previous2 = [];
         for (let i = 1; i < (this.width * this.height); i++) {
-            const cell = (i % 2 == 0 || i % 7 == 0) ? Cell.Alive : Cell.Dead;
+            //const cell = (i % 2 == 0 || i % 7 == 0) ? Cell.Alive : Cell.Dead;
+            const cell = Math.random() < 0.5 ? Cell.Alive : Cell.Dead;
             this.cells.push(cell);
             this.previous.push(Cell.Dead);
             this.previous2.push(Cell.Dead);
         }
+        const r = Math.random() * 255;
+        const g = Math.random() * 255;
+        const b = Math.random() * 255;
+        this.color = `rgb(${r},${g},${b})`;
+        const br = 255 - r;
+        const bg = 255 - g;
+        const bb = 255 - b;
+        this.bgColor = `rgb(${br},${bg},${bb})`;
     }
     getIndex(row, column) {
         return (row * this.width) + column;
@@ -110,12 +121,18 @@ class Universe {
     }
 }
 const pre = document.getElementById("game-content");
+const body = document.getElementById("body");
 let universe = new Universe();
+const setColors = () => {
+    body?.setAttribute("style", `color:${universe.color};background-color:${universe.bgColor}`);
+};
+setColors();
 const renderLoop = () => {
     pre.textContent = universe.asString();
     universe.tick();
     if (universe.finished) {
         universe = new Universe();
+        setColors();
     }
     requestAnimationFrame(renderLoop);
 };
