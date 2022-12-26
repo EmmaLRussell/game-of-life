@@ -7,15 +7,24 @@ class Universe {
     width: number;
     height: number;
     cells: Cell[];
+    finished: boolean;
+    previous: Cell[];
+    previous2: Cell[];
 
     constructor() {
+        this.finished = false;
         this.width = 64;
         this.height = 64;
         this.cells = [];
+        this.previous = [];
+        this.previous2 = [];
         for (let i =1; i < (this.width * this.height); i++) {
             const cell = (i % 2 == 0 || i % 7 == 0) ? Cell.Alive : Cell.Dead;
             this.cells.push(cell);
+            this.previous.push(Cell.Dead);
+            this.previous2.push(Cell.Dead);
         }
+    
     }
 
     getIndex(row: number, column: number) {
@@ -82,16 +91,28 @@ class Universe {
             }
         }
 
+        this.previous2 = this.previous;
+        this.previous = this.cells;
+
         this.cells = next;
+
+        const currentString = this.cellsAsString(this.cells);
+        if (currentString === this.cellsAsString(this.previous) || currentString === this.cellsAsString(this.previous2)) {
+            this.finished = true;    
+        }
     }
 
     asString() {
+        return this.cellsAsString(this.cells);
+    }
+    
+    private cellsAsString(arr: Cell[]) {
         const lines = [];
         for (let row = 0; row < this.height; row++) {
             let line = "";   
             for (let col = 0; col < this.width; col++) {
                 const idx = this.getIndex(row, col);
-                let symbol = this.cells[idx] === Cell.Dead ? "◻" : "◼";
+                let symbol = arr[idx] === Cell.Dead ? "◻" : "◼";
                 line += symbol;
             }
            lines.push(line);
@@ -102,11 +123,14 @@ class Universe {
 }
 
 const pre = document.getElementById("game-content")!;
-const universe = new Universe();
+let universe = new Universe();
 
 const renderLoop = () => {
     pre.textContent = universe.asString();
     universe.tick();
+    if (universe.finished) {
+        universe = new Universe();
+    }
   
     requestAnimationFrame(renderLoop);
 };
