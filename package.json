@@ -1,0 +1,10 @@
+{
+    "name": "game-of-life",
+    "version": "0.1.0",
+    "scripts": {
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "typescript": "4.9.4"
+    }
+}
