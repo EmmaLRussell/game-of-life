@@ -112,7 +112,7 @@ class Universe {
             let line = "";
             for (let col = 0; col < this.width; col++) {
                 const idx = this.getIndex(row, col);
-                let symbol = arr[idx] === Cell.Dead ? "◠" : "◉";
+                let symbol = arr[idx] === Cell.Dead ? "◻" : "◼";
                 line += symbol;
             }
             lines.push(line);
